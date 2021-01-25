@@ -1,0 +1,14 @@
+{
+    "LinkArray":
+        [
+            { "from": 1, "to": 2, "relationship": 2 }, 
+            { "from": 3, "to": 1, "relationship": 3 }, 
+            { "from": 4, "to": 3, "relationship": 6 }, 
+            { "from": 5, "to": 3, "relationship": 3 }, 
+            { "from": 6, "to": 3, "relationship": 3 }, 
+            { "from": 6, "to": 7, "relationship": 5 }, 
+            { "from": 5, "to": 8, "relationship": 1 }, 
+            { "from": 6, "to": 9, "relationship": 4 } 
+        ]
+    
+}
