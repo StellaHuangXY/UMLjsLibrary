@@ -235,20 +235,7 @@
       "classType": 2,
       "impartance": 3,
       "otherInfo": "my info is dispalied here"
-    },
-    {
-      "key":10,
-      "GroupName":"GroupOne",
-      "isGroup":true,
-      "group":11,
-      "otherInfo": "I am group One"
-      
-    },{
-      "key":11,
-      "GroupName":"GroupTwo",
-      "isGroup":true
     }
-
 
   ]
 

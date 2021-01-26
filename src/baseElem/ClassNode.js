@@ -60,17 +60,17 @@ class ClassNode {
      */
 
     //普通类的显示属性
-    this.classBackgroundColor = "#FFF0F5";
+    this.classBackgroundColor = "#FFF8DC";
     this.classBorderWidth = "3";
     this.classBorderColor = "#000000";
 
     //抽象类显示属性
-    this.abstractClassBackgroundColor = "#FFF0F5";
+    this.abstractClassBackgroundColor = "#FFB6C1";
     this.abstractClassBorderWidth = "3";
     this.abstractClassBorderColor = "#000000";
 
     //接口类显示属性
-    this.interfaceBackgroundColor = "#FFF0F5";
+    this.interfaceBackgroundColor = "#6495ED";
     this.interfaceBorderWidth = "3";
     this.interfaceBorderColor = "#000000";
 
@@ -299,42 +299,6 @@ class ClassNode {
         return "~";
     }
   }
-  //根据类的类型显示颜色
-  // getColor(classType) {
-  //   //var that = this;
-  //   console.log("I am here");
-  //   console.log(this);
-  //   console.log("I am kidding" + this.abstractClassBackgroundColor);
-  //   switch (classType) {
-  //     case 0:
-  //       console.log("I am 0" + this.classBackgroundColor.toString());
-  //       return this.classBackgroundColor.toString();
-  //     case 1:
-  //       console.log("I am 1" + this.abstractClassBackgroundColor.toString());
-  //       return this.abstractClassBackgroundColor.toString();
-  //     case 2:
-  //       return this.interfaceBackgroundColor.toString();
-  //     default:
-  //       return this.classBackgroundColor.toString();
-  //   }
-  // }
-
-  getColor(classType) {
-    switch (classType) {
-      case 0:
-        return "white";
-      case 1:
-        return "white";
-      case 2:
-        return "red";
-      default:
-        return "blue";
-    }
-  }
-
-  getBorderWidthInClassTemplate() {
-
-  }
 
   //定义鼠标在节点上悬停显示的模板
   getInfoTemplate() {
@@ -447,11 +411,11 @@ class ClassNode {
 
     return methodTemplate;
   }
-  //定义类的模板
-  getClassTemplate() {
+
+  //定义普通类的模板，在文件ClassDiagram中被调用组成Map
+  getNormalClassTemplate() {
     let $ = go.GraphObject.make;
-    let that = this;
-    var myclass = $(go.Node, "Auto", {
+    var normalClassTemplate = $(go.Node, "Auto", {
         locationSpot: go.Spot.Center,
         fromSpot: go.Spot.AllSides,
         toSpot: go.Spot.AllSides,
@@ -460,53 +424,11 @@ class ClassNode {
       },
       $(go.Shape,
         //定义边框的宽度
-
-
-        //定义边框，暂时采用重要性的方法定义边框的颜色和粗细
-
-        new go.Binding("stroke", this.classTypeDataKey, function (impartance) {
-          switch (impartance) {
-            case 0:
-              return this.classBackgroundColor;
-            case 1:
-              return this.abstractClassBackgroundColor;
-            case 2:
-              return this.interfaceBackgroundColor;
-            default:
-              return this.classBackgroundColor;
-          }
-        }),
-        new go.Binding("strokeWidth", "impartance", function (impartance) {
-          switch (impartance) {
-            case 1:
-              return "5";
-            case 2:
-              return "3";
-            case 3:
-              return "1";
-            default:
-              return "1";
-          }
-        }),
-        //  {
-        //   "fill": "white",
-        // },
-        //new go.Binding("fill", that.classTypeStr, this.getColor),
-        new go.Binding("fill", that.classTypeStr, function (classtype) {
-
-          switch (classType) {
-            case 0:
-
-              return this.classBackgroundColor.toString();
-            case 1:
-
-              return this.abstractClassBackgroundColor.toString();
-            case 2:
-              return this.interfaceBackgroundColor.toString();
-            default:
-              return this.classBackgroundColor.toString();
-          }
-        })
+        {
+          stroke: this.classBorderColor,
+          strokeWidth: this.classBorderWidth,
+          fill: this.classBackgroundColor
+        }
       ),
       $(go.Panel, "Table", {
           defaultRowSeparatorStroke: "black"
@@ -518,27 +440,7 @@ class ClassNode {
             margin: 3,
             alignment: go.Spot.Center,
           },
-          //如果是特殊类就显示这一行:Abstract/Interface
-          $(go.TextBlock, {
-              alignment: go.Spot.Center,
-              margin: 5,
-              font: "Italic normal normal 12px Georgia, Serif",
-              isMultiline: false,
-              editable: true
-            },
-            // 根据是否是特殊类，绑定是否显示属性
-            new go.Binding("visible", "classType", function (classType) {
-              return classType != 0;
-            }),
-            new go.Binding("text", "classType", function (classType) {
-              if (classType == 1)
-                return "<<Abstract>>"
-              else if (classType == 2)
-                return "<<Interface>>"
-              else return "";
 
-            })
-          ),
           $(go.TextBlock, {
               row: 0,
               columnSpan: 2,
@@ -548,28 +450,30 @@ class ClassNode {
               isMultiline: false,
               editable: true
             },
-            new go.Binding("text", "className").makeTwoWay()),
+            new go.Binding("text", this.classNameDataKey).makeTwoWay()),
         ),
         // properties
         $(go.TextBlock, "Properties", {
             row: 1,
-            font: "italic 10pt sans-serif"
+            font: "italic 10pt sans-serif",
+            //margin: this.classBorderWidth
           },
           new go.Binding("visible", "visible", function (v) {
             return !v;
           }).ofObject("PROPERTIES")),
         $(go.Panel, "Vertical", {
-            name: "PROPERTIES"
+            name: "PROPERTIES",
+            background: this.classBackgroundColor
+
           },
-          new go.Binding("itemArray", "properties"), {
+          new go.Binding("itemArray", this.propertiesDataKey), {
             row: 1,
-            margin: 5,
+            margin: parseInt(this.classBorderWidth),
             stretch: go.GraphObject.Fill,
             defaultAlignment: go.Spot.Left,
             //background: "lightyellow",
             itemTemplate: this.getPropertyTemplate()
           },
-          new go.Binding("background", "classType", this.getColor),
         ),
         $("PanelExpanderButton", "PROPERTIES", {
             row: 1,
@@ -577,7 +481,7 @@ class ClassNode {
             alignment: go.Spot.TopRight,
             visible: false
           },
-          new go.Binding("visible", "properties", function (arr) {
+          new go.Binding("visible", this.propertiesDataKey, function (arr) {
             return arr.length > 0;
           })),
         // methods
@@ -591,15 +495,14 @@ class ClassNode {
         $(go.Panel, "Vertical", {
             name: "METHODS"
           },
-          new go.Binding("itemArray", "methods"), {
+          new go.Binding("itemArray", this.methodsDataKey), {
             row: 2,
-            margin: 5,
+            margin: parseInt(this.classBorderWidth),
             stretch: go.GraphObject.Fill,
             defaultAlignment: go.Spot.Left,
-            //background: "lightyellow",
+            background: this.classBackgroundColor,
             itemTemplate: this.getMethodTemplate()
           },
-          new go.Binding("background", "classType", this.getColor),
         ),
         $("PanelExpanderButton", "METHODS", {
             row: 2,
@@ -607,13 +510,256 @@ class ClassNode {
             alignment: go.Spot.TopRight,
             visible: false
           },
-          new go.Binding("visible", "methods", function (arr) {
+          new go.Binding("visible", this.methodsDataKey, function (arr) {
             return arr.length > 0;
           }))
 
       ))
-    console.log(myclass.vulue);
-    return myclass;
+    return normalClassTemplate;
+  }
+
+  //定义抽象类的模板
+  getAbstractClassTemplate() {
+    let $ = go.GraphObject.make;
+    var abstractClassTemplate = $(go.Node, "Auto", {
+        locationSpot: go.Spot.Center,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides,
+        //fill: this.abstractClassBackgroundColor,
+        toolTip: this.getInfoTemplate(),
+      },
+      $(go.Shape,
+        //定义边框的宽度、颜色
+        {
+          stroke: this.abstractClassBorderColor,
+          strokeWidth: this.abstractClassBorderWidth,
+          fill: this.abstractClassBackgroundColor
+        }
+      ),
+      $(go.Panel, "Table", {
+          defaultRowSeparatorStroke: "black"
+        },
+
+        $(go.Panel, "Vertical", {
+            row: 0,
+            columnSpan: 1,
+            margin: 3,
+            alignment: go.Spot.Center,
+          },
+          //如果是特殊类就显示这一行:Abstract/Interface
+          $(go.TextBlock, {
+              alignment: go.Spot.Center,
+              margin: 5,
+              font: "Italic normal normal 12px Georgia, Serif",
+              isMultiline: false,
+              editable: true,
+              text: "<<Abstract>>"
+            },
+
+          ),
+          $(go.TextBlock, {
+              row: 0,
+              columnSpan: 2,
+              margin: 3,
+              alignment: go.Spot.Center,
+              font: "bold 12pt sans-serif",
+              isMultiline: false,
+              editable: true
+            },
+            new go.Binding("text", this.classNameDataKey).makeTwoWay()),
+        ),
+        // properties
+        $(go.TextBlock, "Properties", {
+            row: 1,
+            font: "italic 10pt sans-serif"
+          },
+          new go.Binding("visible", "visible", function (v) {
+            return !v;
+          }).ofObject("PROPERTIES")),
+        $(go.Panel, "Vertical", {
+            name: "PROPERTIES"
+          },
+          new go.Binding("itemArray", this.propertiesDataKey), {
+            row: 1,
+            margin: parseInt(this.abstractClassBorderWidth),
+            stretch: go.GraphObject.Fill,
+            defaultAlignment: go.Spot.Left,
+            background: this.abstractClassBackgroundColor,
+            itemTemplate: this.getPropertyTemplate()
+          },
+          //new go.Binding("background", "classType", this.getColor),
+        ),
+        $("PanelExpanderButton", "PROPERTIES", {
+            row: 1,
+            column: 1,
+            alignment: go.Spot.TopRight,
+            visible: false
+          },
+          new go.Binding("visible", this.propertiesDataKey, function (arr) {
+            return arr.length > 0;
+          })),
+        // methods
+        $(go.TextBlock, "Methods", {
+            row: 2,
+            font: "italic 10pt sans-serif"
+          },
+          new go.Binding("visible", "visible", function (v) {
+            return !v;
+          }).ofObject("METHODS")),
+        $(go.Panel, "Vertical", {
+            name: "METHODS"
+          },
+          new go.Binding("itemArray", this.methodsDataKey), {
+            row: 2,
+            margin: parseInt(this.abstractClassBorderWidth),
+            stretch: go.GraphObject.Fill,
+            defaultAlignment: go.Spot.Left,
+            background: this.abstractClassBackgroundColor,
+            itemTemplate: this.getMethodTemplate()
+          },
+          // new go.Binding("background", "classType", this.getColor),
+        ),
+        $("PanelExpanderButton", "METHODS", {
+            row: 2,
+            column: 1,
+            alignment: go.Spot.TopRight,
+            visible: false
+          },
+          new go.Binding("visible", this.methodsDataKey, function (arr) {
+            return arr.length > 0;
+          }))
+
+      ))
+    return abstractClassTemplate;
+  }
+
+  //定义接口的模板
+  getInterfaceTemplate() {
+    let $ = go.GraphObject.make;
+    var interfaceTemplate = $(go.Node, "Auto", {
+        locationSpot: go.Spot.Center,
+        fromSpot: go.Spot.AllSides,
+        toSpot: go.Spot.AllSides,
+
+        toolTip: this.getInfoTemplate(),
+      },
+      $(go.Shape,
+        //定义边框的宽度、颜色
+        {
+          fill: this.interfaceBackgroundColor,
+          stroke: this.interfaceBorderColor,
+          strokeWidth: this.interfaceBorderWidth
+        }
+      ),
+      $(go.Panel, "Table", {
+          defaultRowSeparatorStroke: "black"
+        },
+
+        $(go.Panel, "Vertical", {
+            row: 0,
+            columnSpan: 1,
+            margin: 3,
+            alignment: go.Spot.Center,
+          },
+          //如果是特殊类就显示这一行:Abstract/Interface
+          $(go.TextBlock, {
+              alignment: go.Spot.Center,
+              margin: 5,
+              font: "Italic normal normal 12px Georgia, Serif",
+              isMultiline: false,
+              editable: true,
+              text: "<<Interface>>"
+            },
+
+          ),
+          $(go.TextBlock, {
+              row: 0,
+              columnSpan: 2,
+              margin: 3,
+              alignment: go.Spot.Center,
+              font: "bold 12pt sans-serif",
+              isMultiline: false,
+              editable: true
+            },
+            new go.Binding("text", this.classNameDataKey).makeTwoWay()),
+        ),
+        // properties
+        $(go.TextBlock, "Properties", {
+            row: 1,
+            font: "italic 10pt sans-serif"
+          },
+          new go.Binding("visible", "visible", function (v) {
+            return !v;
+          }).ofObject("PROPERTIES")),
+        $(go.Panel, "Vertical", {
+            name: "PROPERTIES"
+          },
+          new go.Binding("itemArray", this.propertiesDataKey), {
+            row: 1,
+            margin: parseInt(this.interfaceBorderWidth),
+            stretch: go.GraphObject.Fill,
+            defaultAlignment: go.Spot.Left,
+            background: this.interfaceBackgroundColor,
+            itemTemplate: this.getPropertyTemplate()
+          },
+          //new go.Binding("background", "classType", this.getColor),
+        ),
+        $("PanelExpanderButton", "PROPERTIES", {
+            row: 1,
+            column: 1,
+            alignment: go.Spot.TopRight,
+            visible: false
+          },
+          new go.Binding("visible", this.propertiesDataKey, function (arr) {
+            return arr.length > 0;
+          })),
+        // methods
+        $(go.TextBlock, "Methods", {
+            row: 2,
+            font: "italic 10pt sans-serif"
+          },
+          new go.Binding("visible", "visible", function (v) {
+            return !v;
+          }).ofObject("METHODS")),
+        $(go.Panel, "Vertical", {
+            name: "METHODS"
+          },
+          new go.Binding("itemArray", this.methodsDataKey), {
+            row: 2,
+            margin: parseInt(this.interfaceBorderWidth),
+            stretch: go.GraphObject.Fill,
+            defaultAlignment: go.Spot.Left,
+            background: this.interfaceBackgroundColor,
+            itemTemplate: this.getMethodTemplate()
+          },
+          // new go.Binding("background", "classType", this.getColor),
+        ),
+        $("PanelExpanderButton", "METHODS", {
+            row: 2,
+            column: 1,
+            alignment: go.Spot.TopRight,
+            visible: false
+          },
+          new go.Binding("visible", this.methodsDataKey, function (arr) {
+            return arr.length > 0;
+          }))
+
+      ))
+    return interfaceTemplate;
+  }
+
+
+  //调用创建三种类模板的函数，组成Map
+  //返回Map
+  getClassTemplateMap() {
+    let $ = go.GraphObject.make;
+    var classTemplateMap = new go.Map();
+    classTemplateMap.add("class", this.getNormalClassTemplate());
+    classTemplateMap.add("abstractClass", this.getAbstractClassTemplate());
+    classTemplateMap.add("interface", this.getInterfaceTemplate());
+
+    return classTemplateMap;
+
   }
 }
 

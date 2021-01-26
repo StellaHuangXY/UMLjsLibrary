@@ -8,7 +8,8 @@
 <script>
 import { ClassNode } from "../baseElem/ClassNode.js";
 import { LinkTemp } from "../baseElem/LinkTemp.js";
-import { GroupTemp } from "../baseElem/GroupTemp.js";
+//import { GroupTemp } from "../baseElem/GroupTemp.js";
+import { DataManager } from "../baseElem/DataManager.js";
 let $ = window.go.GraphObject.make;
 export default {
   name: "ClassDiagram",
@@ -42,21 +43,38 @@ export default {
         arrangement: go.TreeLayout.ArrangementHorizontal
       })
     });
+
+    //创建对象便于调用函数
     let ClassTemplate = new ClassNode();
     let ClassLinkTemplate = new LinkTemp();
-    let GroupTemplate = new GroupTemp();
+    let diaDataManager = new DataManager();
 
-    //ClassTemplate.setAnnotationBackgroundColor("#DA70D6");
+    //测试class修改颜色、线条颜色/粗细的功能
+    //ClassTemplate.setClassBackgroundColor("#BA55D3");
+    ClassTemplate.setInterfaceBorderWidth("7");
+    ClassTemplate.setClassBorderWidth("7");
 
-    myDiagram.nodeTemplate = ClassTemplate.getClassTemplate();
+    //获得类的Map
+    myDiagram.nodeTemplateMap = ClassTemplate.getClassTemplateMap();
     myDiagram.linkTemplate = ClassLinkTemplate.getLinkTemp();
-    myDiagram.groupTemplate = GroupTemplate.getGroupTemplate();
 
+    //读取数据
     var diagramClassData = require(`./../../data/${that.nodeDataUrl}.json`); //读取节点数据
     var nodedata = diagramClassData.classArray;
 
     var diagramLinkData = require(`./../../data/${that.linkDataUrl}.json`); //读取关系数据
     var linkdata = diagramLinkData.LinkArray;
+
+    //处理数据，
+    //正确渲染节点数据的必须操作
+    //数据中【值-类的类型】对应的数组，即classTypeValueArray[0]，classTypeValueArray[1]，classTypeValueArray[3]的值
+    //分别对应普通类，抽象类，接口类
+    var classTypeValueArray = [0, 1, 2];
+    diaDataManager.addCategoryToData(
+      "classType",
+      classTypeValueArray,
+      nodedata
+    );
 
     myDiagram.model = $(go.GraphLinksModel, {
       copiesArrays: true,
@@ -64,8 +82,6 @@ export default {
       nodeDataArray: nodedata,
       linkDataArray: linkdata
     });
-    var data = myDiagram.model;
-    console.log("找到的data是" + data);
   }
 };
 </script>
