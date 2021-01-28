@@ -20,6 +20,9 @@ class ClassNode {
     //属性类型 ：value是json字符串
     //例如："int","double"
     this.propertieTypeDataKey = "type";
+
+    this.propertieIsStaticDataKey = "isStatic";
+
     //类方法数组
     this.methodsDataKey = "methods";
     //方法名称：value是json数组
@@ -35,11 +38,9 @@ class ClassNode {
     this.methodParamNameDataKey = "name";
     //参数类型，value是json字符串
     this.methodParamTypeDataKey = "type";
-    //判断该方法是否为构造函数
-    this.methodIsConstructorDataKey = "isConstructor";
 
     //判断该方法是否为静态函数
-    //待补充
+    this.methodIsStaticDataKey = "isStatic";
 
     //类的类型，json值是数字
     //0：普通类；1：抽象类；2：接口类
@@ -61,8 +62,9 @@ class ClassNode {
 
     //普通类的显示属性
     this.classBackgroundColor = "#FFF8DC";
-    this.classBorderWidth = "3";
+    this.classBorderWidth = "6";
     this.classBorderColor = "#000000";
+
 
     //抽象类显示属性
     this.abstractClassBackgroundColor = "#FFB6C1";
@@ -76,6 +78,13 @@ class ClassNode {
 
     //分析信息显示属性
     this.annotationBackgroundColor = "#E6E6FA"
+
+    //如果后端传输数据时，
+    //每个类有设置类底色、类的边框颜色、边框宽度
+    //将优先采用后端数据的数据进行显示
+    this.backgroundColorFromDataKey = "bgColor";
+    this.borderWidthFromDataKey = "borderWidth";
+    this.borderColorFromDataKey = "borderColor"
   }
 
   /**
@@ -96,6 +105,9 @@ class ClassNode {
   }
   getPropertieTypeDataKey() {
     return this.propertieTypeDataKey;
+  }
+  getPropertieIsStaticDataKey() {
+    return this.propertieIsStaticDataKey;
   }
   getMethodsDataKey() {
     return this.methodsDataKey;
@@ -118,8 +130,8 @@ class ClassNode {
   getMethodParamTypeDataKey() {
     return this.methodParamTypeDataKey;
   }
-  getMethodIsConstructorDataKey() {
-    return this.methodIsConstructorDataKey;
+  getMethodIsStaticDataKey() {
+    return this.methodIsStaticDataKey;
   }
   getClassTypeDataKey() {
     return this.classTypeDataKey;
@@ -194,6 +206,10 @@ class ClassNode {
   setPropertieTypeDataKey(keyStr) {
     this.propertieTypeDataKey = keyStr;
   }
+  setPropertieIsStaticDataKey(keyStr) {
+    this.propertieIsStaticDataKey = keyStr;
+  }
+
   setMethodsDataKey(keyStr) {
     this.methodsDataKey = keyStr;
   }
@@ -215,8 +231,8 @@ class ClassNode {
   setMethodParamTypeDataKey(keyStr) {
     this.methodParamTypeDataKey = keyStr;
   }
-  setMethodIsConstructorDataKey(keyStr) {
-    this.methodIsConstructorDataKey = keyStr;
+  setMethodIsStaticDataKey(keyStr) {
+    this.methodIsStaticDataKey = keyStr;
   }
   setClassTypeDataKey(keyStr) {
     this.classTypeDataKey = keyStr;
@@ -324,6 +340,7 @@ class ClassNode {
   }
 
   //定义类属性的模板
+
   getPropertyTemplate() {
     let $ = go.GraphObject.make;
     var propertyTemplate = $(go.Panel, "Horizontal",
@@ -334,26 +351,34 @@ class ClassNode {
           width: 12,
           stroke: "Black"
         },
-        new go.Binding("text", this.propertieVisibilityDataKey, this.convertVisibility)),
+        new go.Binding("text", this.propertieVisibilityDataKey, this.convertVisibility)
+      ),
       // property name, underlined if scope=="class" to indicate static property
       $(go.TextBlock, {
           isMultiline: false,
           editable: true
         },
         new go.Binding("text", this.propertieNameDataKey).makeTwoWay(),
-        new go.Binding("isUnderline", "scope", function (s) {
-          return s[0] === 'c'
+        new go.Binding("isUnderline", this.propertieIsStaticDataKey, function (s) {
+          return s === 1
         })),
       // property type, if known
       $(go.TextBlock, "",
         new go.Binding("text", this.propertieTypeDataKey, function (t) {
           return (t ? ": " : "");
+        }),
+        new go.Binding("isUnderline", this.propertieIsStaticDataKey, function (s) {
+          return s === 1
         })),
       $(go.TextBlock, {
           isMultiline: false,
           editable: true
         },
-        new go.Binding("text", this.propertieTypeDataKey).makeTwoWay()),
+        new go.Binding("text", this.propertieTypeDataKey).makeTwoWay(),
+        new go.Binding("isUnderline", this.propertieIsStaticDataKey, function (s) {
+          return s === 1
+        })
+      ),
       // property default value, if any
       $(go.TextBlock, {
           isMultiline: false,
@@ -361,10 +386,17 @@ class ClassNode {
         },
         new go.Binding("text", "default", function (s) {
           return s ? " = " + s : "";
+        }),
+        new go.Binding("isUnderline", this.propertieIsStaticDataKey, function (s) {
+          return s === 1
         }))
     );
+    //go.TextBlock.setUnderline();
     return propertyTemplate;
   }
+
+
+
   //定义方法的模板
   getMethodTemplate() {
     let $ = go.GraphObject.make;
@@ -382,8 +414,8 @@ class ClassNode {
           editable: true
         },
         new go.Binding("text", this.methodNameDataKey).makeTwoWay(),
-        new go.Binding("isUnderline", "scope", function (s) {
-          return s[0] === 'c'
+        new go.Binding("isUnderline", this.methodIsStaticDataKey, function (s) {
+          return s === 1
         })),
       // method parameters
       $(go.TextBlock, "()",
@@ -396,17 +428,26 @@ class ClassNode {
             s += param.name + ": " + param.type;
           }
           return s + ")";
+        }),
+        new go.Binding("isUnderline", this.methodIsStaticDataKey, function (s) {
+          return s === 1
         })),
       // method return type, if any
       $(go.TextBlock, "",
         new go.Binding("text", this.methodParamTypeDataKey, function (t) {
           return (t ? ": " : "");
+        }),
+        new go.Binding("isUnderline", this.methodIsStaticDataKey, function (s) {
+          return s === 1
         })),
       $(go.TextBlock, {
           isMultiline: false,
           editable: true
         },
-        new go.Binding("text", this.methodReturnTypeDataKey).makeTwoWay())
+        new go.Binding("text", this.methodReturnTypeDataKey).makeTwoWay()),
+      new go.Binding("isUnderline", this.methodIsStaticDataKey, function (s) {
+        return s === 1
+      })
     );
 
     return methodTemplate;
@@ -428,7 +469,10 @@ class ClassNode {
           stroke: this.classBorderColor,
           strokeWidth: this.classBorderWidth,
           fill: this.classBackgroundColor
-        }
+        },
+        new go.Binding("stroke", this.borderColorFromDataKey),
+        new go.Binding("strokeWidth", this.borderWidthFromDataKey),
+        new go.Binding("fill", this.backgroundColorFromDataKey)
       ),
       $(go.Panel, "Table", {
           defaultRowSeparatorStroke: "black"
@@ -464,8 +508,8 @@ class ClassNode {
         $(go.Panel, "Vertical", {
             name: "PROPERTIES",
             background: this.classBackgroundColor
-
           },
+          new go.Binding("background", this.backgroundColorFromDataKey),
           new go.Binding("itemArray", this.propertiesDataKey), {
             row: 1,
             margin: parseInt(this.classBorderWidth),
@@ -474,6 +518,7 @@ class ClassNode {
             //background: "lightyellow",
             itemTemplate: this.getPropertyTemplate()
           },
+          new go.Binding("margin", this.borderWidthFromDataKey),
         ),
         $("PanelExpanderButton", "PROPERTIES", {
             row: 1,
@@ -503,6 +548,8 @@ class ClassNode {
             background: this.classBackgroundColor,
             itemTemplate: this.getMethodTemplate()
           },
+          new go.Binding("background", this.backgroundColorFromDataKey),
+          new go.Binding("margin", this.borderWidthFromDataKey),
         ),
         $("PanelExpanderButton", "METHODS", {
             row: 2,
@@ -534,7 +581,10 @@ class ClassNode {
           stroke: this.abstractClassBorderColor,
           strokeWidth: this.abstractClassBorderWidth,
           fill: this.abstractClassBackgroundColor
-        }
+        },
+        new go.Binding("stroke", this.borderColorFromDataKey),
+        new go.Binding("strokeWidth", this.borderWidthFromDataKey),
+        new go.Binding("fill", this.backgroundColorFromDataKey)
       ),
       $(go.Panel, "Table", {
           defaultRowSeparatorStroke: "black"
@@ -577,17 +627,18 @@ class ClassNode {
             return !v;
           }).ofObject("PROPERTIES")),
         $(go.Panel, "Vertical", {
-            name: "PROPERTIES"
+            name: "PROPERTIES",
+            background: this.abstractClassBackgroundColor
           },
+          new go.Binding("background", this.backgroundColorFromDataKey),
           new go.Binding("itemArray", this.propertiesDataKey), {
             row: 1,
             margin: parseInt(this.abstractClassBorderWidth),
             stretch: go.GraphObject.Fill,
             defaultAlignment: go.Spot.Left,
-            background: this.abstractClassBackgroundColor,
             itemTemplate: this.getPropertyTemplate()
           },
-          //new go.Binding("background", "classType", this.getColor),
+          new go.Binding("margin", this.borderWidthFromDataKey),
         ),
         $("PanelExpanderButton", "PROPERTIES", {
             row: 1,
@@ -617,7 +668,8 @@ class ClassNode {
             background: this.abstractClassBackgroundColor,
             itemTemplate: this.getMethodTemplate()
           },
-          // new go.Binding("background", "classType", this.getColor),
+          new go.Binding("background", this.backgroundColorFromDataKey),
+          new go.Binding("margin", this.borderWidthFromDataKey),
         ),
         $("PanelExpanderButton", "METHODS", {
             row: 2,
@@ -649,7 +701,10 @@ class ClassNode {
           fill: this.interfaceBackgroundColor,
           stroke: this.interfaceBorderColor,
           strokeWidth: this.interfaceBorderWidth
-        }
+        },
+        new go.Binding("stroke", this.borderColorFromDataKey),
+        new go.Binding("strokeWidth", this.borderWidthFromDataKey),
+        new go.Binding("fill", this.backgroundColorFromDataKey)
       ),
       $(go.Panel, "Table", {
           defaultRowSeparatorStroke: "black"
@@ -694,6 +749,7 @@ class ClassNode {
         $(go.Panel, "Vertical", {
             name: "PROPERTIES"
           },
+          new go.Binding("background", this.backgroundColorFromDataKey),
           new go.Binding("itemArray", this.propertiesDataKey), {
             row: 1,
             margin: parseInt(this.interfaceBorderWidth),
@@ -702,7 +758,7 @@ class ClassNode {
             background: this.interfaceBackgroundColor,
             itemTemplate: this.getPropertyTemplate()
           },
-          //new go.Binding("background", "classType", this.getColor),
+          new go.Binding("margin", this.borderWidthFromDataKey),
         ),
         $("PanelExpanderButton", "PROPERTIES", {
             row: 1,
@@ -732,7 +788,8 @@ class ClassNode {
             background: this.interfaceBackgroundColor,
             itemTemplate: this.getMethodTemplate()
           },
-          // new go.Binding("background", "classType", this.getColor),
+          new go.Binding("background", this.backgroundColorFromDataKey),
+          new go.Binding("margin", this.borderWidthFromDataKey),
         ),
         $("PanelExpanderButton", "METHODS", {
             row: 2,

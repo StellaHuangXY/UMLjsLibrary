@@ -8,7 +8,8 @@
         {
           "propertieName": "life",
           "visibility": 0,
-          "type": "int"
+          "type": "int",
+          "isStatic":1
         }
       ],
       "methods": [
@@ -20,14 +21,17 @@
             { "name": "oxygen", "type": "bool" },
             { "name": "water", "type": "bool" }
           ],
-          "is_constructor": 0
+          "is_constructor": 0,
+          "isStatic":1
+
         },
         {
           "methodName": "reproduction", 
           "visibility": 0,
           "return_type": "bool",
           "parameters": [],
-          "is_constructor": 0
+          "is_constructor": 0,
+          "isStatic":1
         }
       ],
       "classType": 1,
@@ -42,7 +46,10 @@
       "methods": [],
       "classType": 0,
      "impartance": 3,
-      "otherInfo": "my info is dispalied here"
+      "otherInfo": "my info is dispalied here",
+      "bgColor":"#7B68EE",
+      "borderWidth":4,
+      "borderColor":"#A9A9A9"
     },
     {
       "key": 3,
@@ -149,10 +156,13 @@
           "is_constructor": 0
         }
       ],
-      "classType": 0,
+      "classType": 1,
       "impartance": 3,
       "otherInfo": "my info is dispalied here",
-      "group":10
+      "group":10,
+      "bgColor":"#FFA500",
+      "borderWidth":2,
+      "borderColor":"#A9A9A9"
     },
     {
       "key": 7,
@@ -217,7 +227,10 @@
       ],
       "classType": 0,
       "impartance": 3,
-      "otherInfo": "my info is dispalied here"
+      "otherInfo": "my info is dispalied here",
+      "bgColor":"#7B68EE",
+      "borderWidth":9,
+      "borderColor":"#A9A9A9"
     },
     {
       "key": 9,
