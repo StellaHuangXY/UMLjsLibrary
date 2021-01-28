@@ -181,6 +181,19 @@ class ClassNode {
     return this.annotationBackgroundColor;
   }
 
+  getBackgroundColorFromDataKey() {
+    return this.backgroundColorFromDataKey;
+  }
+  getBorderWidthFromDataKey() {
+    return this.borderWidthFromDataKey;
+  }
+  getBorderColorFromDataKey() {
+    return this.borderColorFromDataKey;
+  }
+
+
+
+
   /**
    * 
    * 对象属性的set函数
@@ -294,6 +307,17 @@ class ClassNode {
   setInterfaceBorderColor(colorStr) {
     this.interfaceBorderColor = colorStr;
   }
+
+  setBackgroundColorFromDataKey(keyStr) {
+    this.backgroundColorFromDataKey = keyStr;
+  }
+  setBorderWidthFromDataKey(keyStr) {
+    this.borderWidthFromDataKey = keyStr;
+  }
+  setBorderColorFromDataKey(keyStr) {
+    this.borderColorFromDataKey = keyStr;
+  }
+
 
   //分析信息显示属性
   getAnnotationBackgroundColor(colorStr) {
