@@ -6,10 +6,10 @@
 
 //组件行爲
 <script>
-import { ClassNode } from "../baseElem/classDiagramElem/ClassNode.js";
-import { LinkTemp } from "../baseElem/classDiagramElem/LinkTemp.js";
+import { ClassNode } from "../baseElem/classDiagramElem/ClassNode.mjs";
+import { LinkTemp } from "../baseElem/classDiagramElem/LinkTemp.mjs";
 //import { GroupTemp } from "../baseElem/GroupTemp.js";
-import { DataManager } from "../baseElem/DataManager.js";
+import { DataManager } from "../baseElem/DataManager.mjs";
 let $ = window.go.GraphObject.make;
 export default {
   name: "ClassDiagram",
