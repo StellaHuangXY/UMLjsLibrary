@@ -6,8 +6,8 @@
 
 //组件行爲
 <script>
-import { ClassNode } from "../baseElem/ClassNode.js";
-import { LinkTemp } from "../baseElem/LinkTemp.js";
+import { ClassNode } from "../baseElem/classDiagramElem/ClassNode.js";
+import { LinkTemp } from "../baseElem/classDiagramElem/LinkTemp.js";
 //import { GroupTemp } from "../baseElem/GroupTemp.js";
 import { DataManager } from "../baseElem/DataManager.js";
 let $ = window.go.GraphObject.make;

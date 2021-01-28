@@ -16,8 +16,8 @@
 
 <script  type="module">
 const ClassDiagram = () => import("./diagram/ClassDiagram");
-import { ClassNode } from "./baseElem/ClassNode.js";
-import { LinkTemp } from "./baseElem/LinkTemp.js";
+//import { ClassNode } from "./baseElem/ClassNode.js";
+//import { LinkTemp } from "./baseElem/LinkTemp.js";
 
 export default {
   name: "App",
