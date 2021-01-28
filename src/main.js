@@ -7,7 +7,6 @@ import router from './router'
 import gojs from 'gojs'
 Vue.prototype.go = gojs
 
-
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

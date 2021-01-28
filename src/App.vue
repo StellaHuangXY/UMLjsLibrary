@@ -1,13 +1,8 @@
 <template>
   <div id="app">
-    <!-- <img src="./assets/logo.png" />
-    <div
-      id="myDiagram"
-      ref="my"
-      style="border: solid 1px black; width:80%; height:600px;display: flex;justify-content: center;margin: 0 auto;"
-    ></div> -->
+    <div id="myOverviewDiv"></div>
     <ClassDiagram
-      styleString="border: solid 1px black; width:80%; height:600px;justify-content: center;margin: 0 auto;"
+      styleString="background-color: #f2f2f2;border: solid 2px black; width:80%; height:600px;justify-content: center;margin: 0 auto;"
       nodeDataUrl="diagramClass"
       linkDataUrl="diagramLink"
     ></ClassDiagram>
@@ -16,8 +11,6 @@
 
 <script  type="module">
 const ClassDiagram = () => import("./diagram/ClassDiagram");
-//import { ClassNode } from "./baseElem/ClassNode.js";
-//import { LinkTemp } from "./baseElem/LinkTemp.js";
 
 export default {
   name: "App",
@@ -26,7 +19,8 @@ export default {
     ClassDiagram
     //局部注册，该组件只能在当前组件被使用
   },
-  mounted() {}
+  mounted() {
+  }
 };
 </script>
 
@@ -39,4 +33,15 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
+#myOverviewDiv {
+      position: absolute;
+      width: 250px;
+      height: 125px;
+      top: 30px;
+      left: 60px;
+      background-color: #f2f2f2;
+      z-index: 300; /* make sure its in front */
+      border: solid 1px black;
+    }
 </style>
