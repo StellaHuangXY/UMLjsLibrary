@@ -325,8 +325,8 @@ class ClassNode {
   }
 
   //显示方法的visibility
-  convertVisibility(v) {
-    switch (v) {
+  convertVisibility(visibility) {
+    switch (visibility) {
       case 0:
         return "+";
       case 1:
