@@ -9,7 +9,7 @@
 
 //组件行爲
 <script>
-import { ClassDiagram } from "../diagram/ClassDiagram.js";
+import { ClassDiagram } from "../diagram/ClassDiagram.mjs";
 let $ = window.go.GraphObject.make;
 export default {
   name: "ClassDiagram",
